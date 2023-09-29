@@ -98,7 +98,7 @@ resource "google_cloud_run_v2_service_iam_policy" "invoker" {
 
 resource "google_cloud_scheduler_job" "job" {
   name             = "scrobbler-cloudfunction-scheduler"
-  description      = "Trigger the ${google_cloudfunctions2_function.function.name} Cloud Function every 6\30 mins."
+  description      = "Trigger the ${google_cloudfunctions2_function.function.name} Cloud Function every 30 mins."
   schedule         = "59,29 * * * *" # Every 30 mins
   time_zone        = "Australia/Sydney"
   attempt_deadline = "320s"
