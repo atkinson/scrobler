@@ -69,10 +69,10 @@ resource "google_service_account" "service_account" {
   display_name = "Scrobbler Cloud Function Invoker Service Account"
 }
 
-resource "google_cloudfunctions2_function_iam_member" "admin" {
+resource "google_cloudfunctions2_function_iam_member" "invoker" {
   cloud_function = google_cloudfunctions2_function.function.name
-  role           = "roles/cloudfunctions.admin"
-  member         = "serviceAccount:${google_service_account.service_account.email}"
+  role           = "roles/run.invoker"
+  member         = google_service_account.service_account.member
   location       = local.region
   project        = local.project
 }
@@ -81,7 +81,7 @@ resource "google_cloudfunctions2_function_iam_member" "admin" {
 resource "google_cloud_scheduler_job" "job" {
   name             = "scrobbler-cloudfunction-scheduler"
   description      = "Trigger the ${google_cloudfunctions2_function.function.name} Cloud Function every 60 mins."
-  schedule         = "30 * * * *" # Every 60 mins on the half hour
+  schedule         = "0,30 * * * *" # Every 60 mins on the half hour
   time_zone        = "Australia/Sydney"
   attempt_deadline = "320s"
   region           = local.region
