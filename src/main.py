@@ -17,9 +17,9 @@ def parse(track):
     """Remove the timestamp
     returns a tuple (artist, title)
     """
-    return re.sub(
-        "^([0-1]?[0-9]|2[0-3]):[0-5][0-9] [ap]m", "", track.get_text()
-    ).split(" - ")
+    return re.sub("^([0-1]?[0-9]|2[0-3]):[0-5][0-9] [ap]m", "", track.get_text()).split(
+        " - "
+    )
 
 
 def store(key, artist, title, dummy=False):
@@ -39,5 +39,3 @@ def mainHTTP(request):
         store(key, artist, title)
 
     return "ok"
-
-mainHTTP("test")
