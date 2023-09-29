@@ -65,30 +65,48 @@ output "function_uri" {
 }
 
 resource "google_service_account" "service_account" {
-  account_id   = "cloud-function-invoker"
+  account_id   = "invoker"
   display_name = "Scrobbler Cloud Function Invoker Service Account"
+  project      = local.project
 }
 
 resource "google_cloudfunctions2_function_iam_member" "invoker" {
   cloud_function = google_cloudfunctions2_function.function.name
-  role           = "roles/run.invoker"
+  role           = "roles/viewer"
   member         = google_service_account.service_account.member
   location       = local.region
   project        = local.project
 }
 
+# https://github.com/hashicorp/terraform-provider-google/issues/15264
+
+data "google_iam_policy" "invoker" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_v2_service_iam_policy" "invoker" {
+  location    = google_cloudfunctions2_function.function.location
+  name        = google_cloudfunctions2_function.function.name
+  project     = local.project
+  policy_data = data.google_iam_policy.invoker.policy_data
+}
 
 resource "google_cloud_scheduler_job" "job" {
   name             = "scrobbler-cloudfunction-scheduler"
   description      = "Trigger the ${google_cloudfunctions2_function.function.name} Cloud Function every 60 mins."
-  schedule         = "0,30 * * * *" # Every 60 mins on the half hour
+  schedule         = "59 * * * *" # Every 60 mins
   time_zone        = "Australia/Sydney"
   attempt_deadline = "320s"
   region           = local.region
   project          = local.project
 
   http_target {
-    http_method = "GET"
+    http_method = "POST"
     uri         = google_cloudfunctions2_function.function.service_config[0].uri
 
     oidc_token {
