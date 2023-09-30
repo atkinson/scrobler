@@ -22,7 +22,10 @@ def parse(track):
     ).split(" - ")
 
 
-def store(key, artist, title):
+def store(key, artist, title, dummy=False):
+    if dummy:
+        print("artist: {}, title: {}".format(artist, title))
+        return
     doc_ref = db.collection("radio_paradise").document(key)
     doc_ref.set({"artist": artist, "title": title}, merge=True)
 
@@ -36,3 +39,5 @@ def mainHTTP(request):
         store(key, artist, title)
 
     return "ok"
+
+mainHTTP("test")
