@@ -18,7 +18,7 @@ def parse(track):
     returns a tuple (artist, title)
     """
     return re.sub(
-        "^([0-1]?[0-9]|2[0-3]):[0-5][0-9] ([AaPp][Mm])", "", track.get_text()
+        "^([0-1]?[0-9]|2[0-3]):[0-5][0-9] [ap]m", "", track.get_text()
     ).split(" - ")
 
 
