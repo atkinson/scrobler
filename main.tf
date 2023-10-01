@@ -22,6 +22,7 @@ resource "google_storage_bucket" "default" {
   name                        = "${random_id.default.hex}-gcf-source" # Every bucket name must be globally unique
   location                    = "US"
   uniform_bucket_level_access = true
+  project = local.project
 }
 
 data "archive_file" "default" {
