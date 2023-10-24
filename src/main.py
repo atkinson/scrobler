@@ -36,6 +36,6 @@ def mainHTTP(request):
     for track in soup.select('div[class*="p-row"]'):
         artist, title = parse(track)
         key = hashlib.md5(bytes(artist + title, "utf-8")).hexdigest()
-        store(key, artist, title)
+        store(key, artist, title, dummy=True)
 
     return "ok"
