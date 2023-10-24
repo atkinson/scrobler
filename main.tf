@@ -75,8 +75,8 @@ resource "google_cloudfunctions2_function_iam_member" "invoker" {
   cloud_function = google_cloudfunctions2_function.function.name
   role           = "roles/viewer"
   member         = google_service_account.service_account.member
-  location       = local.region
   project        = local.project
+  depends_on = [ google_cloudfunctions2_function.function ]
 }
 
 # https://github.com/hashicorp/terraform-provider-google/issues/15264
