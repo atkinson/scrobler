@@ -33,7 +33,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-
+__pycache__
+.pyc
+.cache
 .ipynb_checkpoints/
 .python-version
 .terraform.lock.hcl
