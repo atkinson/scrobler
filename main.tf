@@ -13,6 +13,12 @@ locals {
   region  = "us-west1"
 }
 
+variable "SPOTIPY_CLIENT_ID" {
+  type = string
+}
+variable "SPOTIPY_CLIENT_SECRET" {
+  type = string
+}
 
 resource "random_id" "default" {
   byte_length = 8
@@ -22,7 +28,7 @@ resource "google_storage_bucket" "default" {
   name                        = "${random_id.default.hex}-gcf-source" # Every bucket name must be globally unique
   location                    = "US"
   uniform_bucket_level_access = true
-  project = local.project
+  project                     = local.project
 }
 
 data "archive_file" "default" {
@@ -42,7 +48,6 @@ resource "google_cloudfunctions2_function" "function" {
   description = "Scrobble RP"
   location    = local.region
   project     = local.project
-
   build_config {
     runtime     = "python310"
     entry_point = "mainHTTP" # Set the entry point
@@ -51,6 +56,10 @@ resource "google_cloudfunctions2_function" "function" {
         bucket = google_storage_bucket.default.name
         object = google_storage_bucket_object.object.name
       }
+    }
+    environment_variables = {
+      SPOTIPY_CLIENT_ID     = var.SPOTIPY_CLIENT_ID
+      SPOTIPY_CLIENT_SECRET = var.SPOTIPY_CLIENT_SECRET
     }
   }
 
@@ -76,7 +85,7 @@ resource "google_cloudfunctions2_function_iam_member" "invoker" {
   role           = "roles/viewer"
   member         = google_service_account.service_account.member
   project        = local.project
-  depends_on = [ google_cloudfunctions2_function.function ]
+  depends_on     = [google_cloudfunctions2_function.function]
 }
 
 # https://github.com/hashicorp/terraform-provider-google/issues/15264
