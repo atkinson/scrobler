@@ -13,10 +13,10 @@ locals {
   region  = "us-west1"
 }
 
-variable "SPOTIPY_CLIENT_ID" {
+variable "SPOTIFY_CLIENT_ID" {
   type = string
 }
-variable "SPOTIPY_CLIENT_SECRET" {
+variable "SPOTIFY_CLIENT_SECRET" {
   type = string
 }
 
@@ -57,16 +57,16 @@ resource "google_cloudfunctions2_function" "function" {
         object = google_storage_bucket_object.object.name
       }
     }
-    environment_variables = {
-      SPOTIPY_CLIENT_ID     = var.SPOTIPY_CLIENT_ID
-      SPOTIPY_CLIENT_SECRET = var.SPOTIPY_CLIENT_SECRET
-    }
   }
 
   service_config {
     max_instance_count = 1
     available_memory   = "256M"
     timeout_seconds    = 60
+    environment_variables = {
+      SPOTIPY_CLIENT_ID     = var.SPOTIFY_CLIENT_ID
+      SPOTIPY_CLIENT_SECRET = var.SPOTIFY_CLIENT_SECRET
+    }
   }
 }
 
@@ -85,6 +85,7 @@ resource "google_cloudfunctions2_function_iam_member" "invoker" {
   role           = "roles/viewer"
   member         = google_service_account.service_account.member
   project        = local.project
+  location       = local.region
   depends_on     = [google_cloudfunctions2_function.function]
 }
 

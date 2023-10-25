@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from google.cloud import firestore
 
 from scrobler.config import db, firebase_collection
+
 from scrobler.spotify import get_spotify_meta
 
 # gcloud iam service-accounts create scrobbler
