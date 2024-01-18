@@ -36,8 +36,8 @@ def store(key, artist, title, dummy=False):
     spotify_meta = get_spotify_meta(elt)
 
     doc_ref = db.collection(firebase_collection).document(key)
-    doc_ref.set(
-        {**elt, **spotify_meta, "added_to_playlist": ""}, merge=True
+    doc_ref.set({**elt, **spotify_meta}, merge=True) if spotify_meta else doc_ref.set(
+        elt, merge=True
     )
 
 
@@ -47,6 +47,6 @@ def mainHTTP(request):
     for track in soup.select('div[class*="p-row"]'):
         artist, title = parse(track)
         key = hashlib.md5(bytes(artist + title, "utf-8")).hexdigest()
-        store(key, artist, title, dummy=True)
+        store(key, artist, title, dummy=False)
 
     return "ok"

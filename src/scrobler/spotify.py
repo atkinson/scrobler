@@ -1,15 +1,13 @@
 import json
+from datetime import date
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-conn = spotipy.Spotify(
-    client_credentials_manager=SpotifyClientCredentials()
-)
+conn = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 
 
 def get_spotify_meta(elt):
     query = f"track:{elt['title']} artist:{elt['artist']}"
-
     results = conn.search(q=query, type="track", limit=1)
     items = results["tracks"]["items"]
     if len(items) > 0:
@@ -20,6 +18,7 @@ def get_spotify_meta(elt):
             "popularity": track["popularity"],
             "duration_ms": track["duration_ms"],
             "explicit": track["explicit"],
+            "last_updated": date.today().strftime("%Y-%m-%d"),
         }
 
 

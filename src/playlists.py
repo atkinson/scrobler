@@ -1,49 +1,16 @@
 import os
-import base64
 import http.client as http_client
 import json
 
-from urllib.parse import urlencode
-import webbrowser
-
 import requests
-from google.cloud import firestore
-
 from scrobler.config import db, firebase_collection
 
 http_client.HTTPConnection.debuglevel = 1
 
 songs = db.collection(firebase_collection).get()
 
-SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 PLAYLIST_ID = "3y0nCSkB0ceFKsKBjEDyk1"
-SPOTIFY_CALLBACK_URL = "http://localhost:8080/callback"
-
-SPOTIFY_AUTHORIZATION_CODE = "Generated using auth.py"
-
-ENCODED_CREDENTIALS = base64.b64encode(
-    f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode("ascii")
-).decode("ascii")
-
-
-# res = requests.post(
-#     url="https://accounts.spotify.com/api/token",
-#     headers={
-#         "Authorization": f"Basic {ENCODED_CREDENTIALS}",
-#         "Content-Type": "application/x-www-form-urlencoded",
-#     },
-#     data={
-#         "grant_type": "authorization_code",
-#         "code": SPOTIFY_AUTHORIZATION_CODE,
-#         "redirect_uri": SPOTIFY_CALLBACK_URL,
-#     },
-# )
-
-# print(res.json())
-
-# ACCESS_TOKEN = res.json()["access_token"]
-ACCESS_TOKEN = "generated from the above, the access token can be used to make requests to the Spotify API"
+ACCESS_TOKEN = os.getenv("SPOTIFY_ACCESS_TOKEN")  # get from auth.py
 
 
 def split_into_chunks(lst, n):
@@ -71,6 +38,15 @@ def split_into_chunks(lst, n):
 # print(res.text)
 
 
+def empty_playlist(playlist_id):
+    res = requests.put(
+        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
+        headers={"Authorization": f"Bearer {ACCESS_TOKEN}"},
+        json={"uris": []},
+    )
+
+
+empty_playlist(PLAYLIST_ID)
 # iterate over songs
 ids = []
 for song in songs:

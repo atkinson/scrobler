@@ -5,9 +5,14 @@ from scrobler.spotify import get_spotify_meta
 
 songs = db.collection(firebase_collection).get()
 
+print(len(songs))
 # iterate over songs
 
-for song in songs:
-    print(song.to_dict())
-    meta = get_spotify_meta(song.to_dict())
-    db.collection(firebase_collection).document(song.id).set(meta)
+# for song in songs:
+#     print(song.to_dict())
+#     try:
+#         meta = get_spotify_meta(song.to_dict())
+#         db.collection(firebase_collection).document(song.id).set(meta)
+#     except Exception as e:
+#         print(e)
+#         continue
