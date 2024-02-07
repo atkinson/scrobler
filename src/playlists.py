@@ -3,14 +3,15 @@ import http.client as http_client
 import json
 
 import requests
-from scrobler.config import db, firebase_collection
+from scrobler.config import db, firebase_collection, SPOTIFY_PLAYLIST_2024
 
 http_client.HTTPConnection.debuglevel = 1
 
 songs = db.collection(firebase_collection).get()
 
-PLAYLIST_ID = "3y0nCSkB0ceFKsKBjEDyk1"
+PLAYLIST_ID = SPOTIFY_PLAYLIST_2024
 ACCESS_TOKEN = os.getenv("SPOTIFY_ACCESS_TOKEN")  # get from auth.py
+ACCESS_TOKEN = "BQDdu4jHt-4Mc25QejXao2c58OvBGTNofFYKgM4gf2MfbfobF9uxyTocM1Z6geBFXlvF5FNbllY_m-0NfaxKCF_jgCcDb3qQkirAGIyB5tp9MGQiXEh38Vj-6krxMBVgkvs0kAlw3WosCHppbnByuei65HbBjUScbwTko--eftcJK2W0ES-J2lcZBamR1msF19IcFu3sFwZ1WFRLph43Fba9MvpIvr4v96hPgYu96A02fMqefMJm"
 
 
 def split_into_chunks(lst, n):

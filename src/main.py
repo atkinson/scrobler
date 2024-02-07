@@ -22,7 +22,7 @@ def parse(track):
         "^([0-1]?[0-9]|2[0-3]):[0-5][0-9] [ap]m",
         "",
         track.get_text(),
-    ).split(" - ")
+    ).split(" - ", 1)
 
 
 def store(key, artist, title, dummy=False):
@@ -36,8 +36,10 @@ def store(key, artist, title, dummy=False):
     spotify_meta = get_spotify_meta(elt)
 
     doc_ref = db.collection(firebase_collection).document(key)
-    doc_ref.set({**elt, **spotify_meta}, merge=True) if spotify_meta else doc_ref.set(
-        elt, merge=True
+    (
+        doc_ref.set({**elt, **spotify_meta}, merge=True)
+        if spotify_meta
+        else doc_ref.set(elt, merge=True)
     )
 
 
